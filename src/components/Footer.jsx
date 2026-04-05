@@ -1,6 +1,24 @@
 export default function Footer() {
     console.log("[Footer] Rendering footer");
 
+    const handleSitemapClick = (event, href) => {
+        event.preventDefault();
+        console.log("[Footer] Click sitemap link", href);
+
+        if (window.location.hash) {
+            window.history.replaceState(
+                null,
+                "",
+                window.location.pathname + window.location.search
+            );
+        }
+
+        const target = document.querySelector(href);
+        if (target) {
+            target.scrollIntoView({ behavior: "smooth" });
+        }
+    };
+
     const sitemapLinks = [
         { label: "About", href: "#profil" },
         { label: "Educational", href: "#pendidikan" },
@@ -46,6 +64,7 @@ export default function Footer() {
                                 <a
                                     key={item.label}
                                     href={item.href}
+                                    onClick={(event) => handleSitemapClick(event, item.href)}
                                     className="flex items-center justify-between text-[#DFDFDF] hover:text-[#8ff0a4] transition-colors duration-300"
                                     style={{ fontFamily: "'Montserrat', sans-serif" }}
                                 >

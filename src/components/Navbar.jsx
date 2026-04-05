@@ -1,101 +1,164 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const navItems = [
-  { label: 'Beranda', href: '#beranda' },
-  { label: 'Profil', href: '#profil' },
-  { label: 'Skill', href: '#skill' },
-  { label: 'Pendidikan', href: '#pendidikan' },
-  { label: 'Proyek', href: '#proyek' },
-  { label: 'Kontak', href: '#kontak' },
+  { label: 'Home', href: '#beranda' },
+  { label: 'About', href: '#profil' },
+  { label: 'Education', href: '#pendidikan' },
+  { label: 'Projects', href: '#proyek' },
+  { label: 'Contact', href: '#kontak' },
 ]
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [activeSection, setActiveSection] = useState('#beranda')
+  const autoScrollLockSectionRef = useRef('')
+  const autoScrollLockTargetTopRef = useRef(0)
+  const autoScrollLockTimeoutRef = useRef(undefined)
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50)
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    const updateNavbarState = () => {
+      const currentScroll = window.scrollY
+      setScrolled(currentScroll > 50)
+
+      const hasAutoScrollLock = Boolean(autoScrollLockSectionRef.current)
+
+      if (hasAutoScrollLock) {
+        const distanceToTarget = Math.abs(
+          currentScroll - autoScrollLockTargetTopRef.current
+        )
+
+        if (distanceToTarget <= 24) {
+          autoScrollLockSectionRef.current = ''
+          if (autoScrollLockTimeoutRef.current) {
+            clearTimeout(autoScrollLockTimeoutRef.current)
+            autoScrollLockTimeoutRef.current = undefined
+          }
+        } else {
+          setActiveSection(autoScrollLockSectionRef.current)
+          return
+        }
+      }
+
+      const scrollReference = currentScroll + window.innerHeight * 0.35
+      let nextActiveSection = navItems[0].href
+
+      navItems.forEach((item) => {
+        const sectionElement = document.querySelector(item.href)
+        if (sectionElement && sectionElement.offsetTop <= scrollReference) {
+          nextActiveSection = item.href
+        }
+      })
+
+      setActiveSection((previousSection) => {
+        if (previousSection !== nextActiveSection) {
+          console.log('[Navbar] Active section changed to', nextActiveSection)
+          return nextActiveSection
+        }
+        return previousSection
+      })
+    }
+
+    window.addEventListener('scroll', updateNavbarState, { passive: true })
+    window.addEventListener('resize', updateNavbarState)
+    updateNavbarState()
+
+    return () => {
+      window.removeEventListener('scroll', updateNavbarState)
+      window.removeEventListener('resize', updateNavbarState)
+      if (autoScrollLockTimeoutRef.current) {
+        clearTimeout(autoScrollLockTimeoutRef.current)
+      }
+    }
   }, [])
 
   const handleClick = (e, href) => {
     e.preventDefault()
-    setIsOpen(false)
+    console.log('[Navbar] Clicked nav item', href)
+    setActiveSection(href)
+
+    if (window.location.hash) {
+      window.history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      )
+    }
+
     const target = document.querySelector(href)
     if (target) {
+      const targetTop = target.offsetTop
+      const travelDistance = Math.abs(targetTop - window.scrollY)
+      const lockDuration = Math.min(1400, Math.max(450, travelDistance * 0.65))
+
+      autoScrollLockSectionRef.current = href
+      autoScrollLockTargetTopRef.current = targetTop
+      if (autoScrollLockTimeoutRef.current) {
+        clearTimeout(autoScrollLockTimeoutRef.current)
+      }
+      autoScrollLockTimeoutRef.current = setTimeout(() => {
+        autoScrollLockSectionRef.current = ''
+        autoScrollLockTimeoutRef.current = undefined
+      }, lockDuration)
+
       target.scrollIntoView({ behavior: 'smooth' })
     }
   }
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
-          ? 'bg-surface/80 backdrop-blur-xl shadow-lg shadow-black/10 border-b border-white/5'
-          : 'bg-transparent'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center h-16 lg:h-20">
+    <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+      <div className="hidden lg:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-3 sm:pt-4">
+        <div
+          className={`pointer-events-auto mx-auto flex items-center justify-center h-14 lg:h-16 rounded-full border transition-[max-width,background-color,border-color,backdrop-filter,box-shadow] duration-300 ${scrolled
+            ? 'max-w-4xl border-white/6 bg-surface/45 backdrop-blur-md shadow-md shadow-black/10'
+            : 'max-w-6xl border-transparent bg-transparent'
+            }`}
+        >
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="flex items-center gap-1 px-2">
             {navItems.map((item) => (
               <a
                 key={item.href}
                 href={item.href}
                 onClick={(e) => handleClick(e, item.href)}
-                className="relative px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors duration-300 group"
+                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 group inline-flex items-center gap-2 ${activeSection === item.href
+                  ? 'text-[#8ff0a4]'
+                  : 'text-slate-300 hover:text-[#8ff0a4]'
+                  }`}
               >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeSection === item.href
+                    ? 'bg-[#8ff0a4] opacity-100'
+                    : 'bg-transparent opacity-0'
+                    }`}
+                />
                 {item.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-gradient-to-r from-primary to-accent group-hover:w-3/4 transition-all duration-300 rounded-full" />
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#8ff0a4] group-hover:w-3/4 transition-all duration-300 rounded-full" />
               </a>
             ))}
           </div>
-
-          {/* Mobile Hamburger */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden relative w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="Toggle menu"
-          >
-            <div className="flex flex-col gap-1.5">
-              <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 origin-center ${
-                  isOpen ? 'rotate-45 translate-y-2' : ''
-                }`}
-              />
-              <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 ${
-                  isOpen ? 'opacity-0 scale-0' : ''
-                }`}
-              />
-              <span
-                className={`block w-6 h-0.5 bg-white transition-all duration-300 origin-center ${
-                  isOpen ? '-rotate-45 -translate-y-2' : ''
-                }`}
-              />
-            </div>
-          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={`md:hidden transition-all duration-500 overflow-hidden ${
-          isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
-        }`}
-      >
-        <div className="px-4 pb-4 bg-surface/95 backdrop-blur-xl border-t border-white/5">
-          {navItems.map((item, index) => (
+      {/* Mobile Dock */}
+      <div className="lg:hidden pointer-events-auto fixed inset-x-0 bottom-3 z-70 flex justify-center px-3 pb-[env(safe-area-inset-bottom)]">
+        <div className="flex w-full max-w-140 items-end gap-1 rounded-2xl border border-white/10 bg-surface/80 px-2 py-2 backdrop-blur-xl shadow-lg shadow-black/20">
+          {navItems.map((item) => (
             <a
               key={item.href}
               href={item.href}
               onClick={(e) => handleClick(e, item.href)}
-              className="block px-4 py-3 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-300"
-              style={{ animationDelay: `${index * 50}ms` }}
+              className={`flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-2 py-1.5 text-[11px] font-medium transition-all duration-300 ${activeSection === item.href
+                ? 'text-[#8ff0a4] bg-[#8ff0a4]/12 scale-105'
+                : 'text-[#BEBEBE] hover:text-[#8ff0a4] hover:bg-white/5 hover:scale-110'
+                }`}
             >
-              {item.label}
+              <span
+                className={`mb-1 h-1.5 w-1.5 rounded-full ${activeSection === item.href
+                  ? 'bg-[#8ff0a4]'
+                  : 'bg-transparent'
+                  }`}
+              />
+              <span className="w-full truncate text-center">{item.label}</span>
             </a>
           ))}
         </div>
