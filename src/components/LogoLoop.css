@@ -1,0 +1,54 @@
+@keyframes logo-loop {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.logo-loop-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.logo-loop-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+}
+
+.logo-loop-track[data-direction="left"] {
+  animation: logo-loop linear infinite;
+}
+
+.logo-loop-track[data-direction="right"] {
+  animation: logo-loop linear infinite reverse;
+}
+
+
+.logo-loop-mask {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 10%,
+    black 90%,
+    transparent
+  );
+}
+
+.logo-loop-track img {
+  opacity: 0.45;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.logo-loop-track img:hover {
+  transform: scale(1.25);
+  opacity: 0.85;
+}
