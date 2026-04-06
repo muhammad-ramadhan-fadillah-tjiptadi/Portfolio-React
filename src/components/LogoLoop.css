@@ -46,6 +46,13 @@
   );
 }
 
+@media (max-width: 768px) {
+  .logo-loop-mask {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
 .logo-loop-track img {
   opacity: 0.45;
   transition:

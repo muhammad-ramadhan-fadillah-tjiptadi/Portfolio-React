@@ -243,7 +243,7 @@ export default memo(function FaultyTerminal({
   tint = '#ffffff',
   mouseReact = true,
   mouseStrength = 0.2,
-  dpr = typeof window !== 'undefined' ? (window.innerWidth > 768 ? Math.min(window.devicePixelRatio || 1, 2) : 1) : 1,
+  dpr = typeof window !== 'undefined' ? (window.innerWidth > 768 ? Math.min(window.devicePixelRatio || 1, 2) : 0.75) : 1,
   pageLoadAnimation = true,
   brightness = 1,
   className = '',
@@ -348,6 +348,10 @@ export default memo(function FaultyTerminal({
         entries.forEach(entry => {
           isVisibleRef.current = entry.isIntersecting;
           console.log(`[FaultyTerminal] Viewport intersection: ${entry.isIntersecting ? "Visible (Rendering resumed)" : "Hidden (Rendering paused)"}`);
+          if (entry.isIntersecting) {
+            cancelAnimationFrame(rafRef.current);
+            rafRef.current = requestAnimationFrame(update);
+          }
         });
       },
       { threshold: 0.01 }
@@ -355,9 +359,9 @@ export default memo(function FaultyTerminal({
     intersectObserver.observe(ctn);
 
     const update = t => {
-      rafRef.current = requestAnimationFrame(update);
-
       if (!isVisibleRef.current) return;
+
+      rafRef.current = requestAnimationFrame(update);
 
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
