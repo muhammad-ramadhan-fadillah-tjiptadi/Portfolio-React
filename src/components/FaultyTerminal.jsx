@@ -1,5 +1,5 @@
 import { Renderer, Program, Mesh, Color, Triangle } from 'ogl';
-import { useEffect, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useRef, useMemo, useCallback, memo } from 'react';
 import './FaultyTerminal.css';
 
 const vertexShader = `
@@ -221,7 +221,7 @@ function hexToRgb(hex) {
   return [((num >> 16) & 255) / 255, ((num >> 8) & 255) / 255, (num & 255) / 255];
 }
 
-export default function FaultyTerminal({
+export default memo(function FaultyTerminal({
   scale = 1,
   gridMul = [2, 1],
   digitSize = 1.5,
@@ -252,7 +252,8 @@ export default function FaultyTerminal({
   const frozenTimeRef = useRef(0);
   const rafRef = useRef(0);
   const loadAnimationStartRef = useRef(0);
-  const timeOffsetRef = useRef(Math.random() * 100);
+  const timeOffsetRef = useRef(0);
+  const isVisibleRef = useRef(true);
 
   const tintVec = useMemo(() => hexToRgb(tint), [tint]);
 
@@ -270,6 +271,10 @@ export default function FaultyTerminal({
   useEffect(() => {
     const ctn = containerRef.current;
     if (!ctn) return;
+
+    if (timeOffsetRef.current === 0) {
+      timeOffsetRef.current = Math.random() * 100;
+    }
 
     console.log('[FaultyTerminal] Initializing WebGL renderer');
 
@@ -332,8 +337,21 @@ export default function FaultyTerminal({
     resizeObserver.observe(ctn);
     resize();
 
+    const intersectObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          isVisibleRef.current = entry.isIntersecting;
+          console.log(`[FaultyTerminal] Viewport intersection: ${entry.isIntersecting ? "Visible (Rendering resumed)" : "Hidden (Rendering paused)"}`);
+        });
+      },
+      { threshold: 0.01 }
+    );
+    intersectObserver.observe(ctn);
+
     const update = t => {
       rafRef.current = requestAnimationFrame(update);
+
+      if (!isVisibleRef.current) return;
 
       if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
@@ -377,6 +395,7 @@ export default function FaultyTerminal({
       console.log('[FaultyTerminal] Cleaning up WebGL renderer');
       cancelAnimationFrame(rafRef.current);
       resizeObserver.disconnect();
+      intersectObserver.disconnect();
       if (mouseReact) ctn.removeEventListener('mousemove', handleMouseMove);
       if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
@@ -406,4 +425,4 @@ export default function FaultyTerminal({
   ]);
 
   return <div ref={containerRef} className={`faulty-terminal-container ${className}`} style={style} {...rest} />;
-}
+});

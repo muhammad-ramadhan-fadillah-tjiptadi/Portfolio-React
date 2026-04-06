@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 
-export default function KontakSection() {
+export default memo(function KontakSection() {
   const [form, setForm] = useState({ nama: "", email: "", pesan: "" });
   const [submitted, setSubmitted] = useState(false);
 
@@ -107,4 +107,4 @@ export default function KontakSection() {
       </div>
     </section>
   );
-}
+});

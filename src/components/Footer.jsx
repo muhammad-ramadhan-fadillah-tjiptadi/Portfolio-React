@@ -1,4 +1,6 @@
-export default function Footer() {
+import { memo } from "react";
+
+export default memo(function Footer() {
     console.log("[Footer] Rendering footer");
 
     const handleSitemapClick = (event, href) => {
@@ -112,4 +114,4 @@ export default function Footer() {
             </div>
         </footer>
     );
-}
+});

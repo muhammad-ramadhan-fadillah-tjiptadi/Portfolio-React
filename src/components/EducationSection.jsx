@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo, useEffect } from 'react';
 
 const educationData = [
   {
@@ -11,16 +11,21 @@ const educationData = [
   },
 ];
 
-export default function EducationSection() {
+export default memo(function EducationSection() {
   const [expandedIndex, setExpandedIndex] = useState(null);
 
   const toggleAccordion = (index) => {
+    console.log(`[EducationSection] Toggling accordion index ${index}`);
     if (expandedIndex === index) {
       setExpandedIndex(null);
     } else {
       setExpandedIndex(index);
     }
   };
+
+  useEffect(() => {
+    console.log("[EducationSection] Rendering education section");
+  }, []);
 
   return (
     <section
@@ -178,4 +183,4 @@ export default function EducationSection() {
       </div>
     </section>
   );
-}
+});

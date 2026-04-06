@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, memo } from 'react'
 
 const navItems = [
   { label: 'Home', href: '#beranda' },
@@ -8,7 +8,7 @@ const navItems = [
   { label: 'Contact', href: '#kontak' },
 ]
 
-export default function Navbar() {
+export default memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('#beranda')
   const autoScrollLockSectionRef = useRef('')
@@ -165,4 +165,4 @@ export default function Navbar() {
       </div>
     </nav>
   )
-}
+});

@@ -1,6 +1,10 @@
+import { memo, useEffect } from 'react';
 import './LogoLoop.css';
 
-const LogoLoop = ({ items = [], direction = 'left', speed = 30, className = "" }) => {
+const LogoLoop = memo(({ items = [], direction = 'left', speed = 30, className = "" }) => {
+  useEffect(() => {
+    console.log("[LogoLoop] Mounted with direction:", direction);
+  }, [direction]);
   // We duplicate the items so the loop is seamless
   const duplicatedItems = [...items, ...items];
 
@@ -22,6 +26,6 @@ const LogoLoop = ({ items = [], direction = 'left', speed = 30, className = "" }
       </div>
     </div>
   );
-};
+});
 
 export default LogoLoop;

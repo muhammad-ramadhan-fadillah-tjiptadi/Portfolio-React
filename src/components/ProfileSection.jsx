@@ -1,6 +1,7 @@
 import FaultyTerminal from "./FaultyTerminal";
+import { memo } from "react";
 
-export default function ProfilSection() {
+export default memo(function ProfilSection() {
   console.log("[ProfilSection] Rendering About Me section");
 
   return (
@@ -114,4 +115,4 @@ export default function ProfilSection() {
       </div>
     </section>
   );
-}
+});

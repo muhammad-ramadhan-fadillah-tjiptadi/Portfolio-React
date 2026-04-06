@@ -1,3 +1,4 @@
+import { memo, useEffect } from "react";
 import LogoLoop from "./LogoLoop";
 import htmlIcon from "../assets/html-5-svgrepo-com.svg";
 import cssIcon from "../assets/css-3-svgrepo-com.svg";
@@ -133,7 +134,11 @@ const techItems2 = [
   </span>,
 ];
 
-export default function HeroSection() {
+export default memo(function HeroSection() {
+  useEffect(() => {
+    console.log("[HeroSection] Rendering HeroSection");
+  }, []);
+
   return (
     <section
       id="beranda"
@@ -232,4 +237,4 @@ export default function HeroSection() {
       </div>
     </section>
   );
-}
+});

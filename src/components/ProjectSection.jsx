@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, memo } from 'react'
 
 const projects = [
   {
@@ -89,7 +89,7 @@ const splitTitleByTwoWords = (title) => {
   return lines
 }
 
-export default function ProyekSection() {
+export default memo(function ProyekSection() {
   const itemsPerPage = 3
   const totalPages = Math.ceil(projects.length / itemsPerPage)
   const [currentPage, setCurrentPage] = useState(1)
@@ -360,4 +360,4 @@ export default function ProyekSection() {
       </div>
     </section>
   )
-}
+});
