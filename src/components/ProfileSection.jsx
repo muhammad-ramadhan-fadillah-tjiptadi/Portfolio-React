@@ -9,9 +9,9 @@ export default memo(function ProfilSection() {
       <div className="absolute top-0 left-12 sm:left-16 lg:left-24 right-12 sm:right-16 lg:right-24 h-[1px] bg-white/[0.05]"></div>
 
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div className="grid md:grid-cols-2 gap-0 items-stretch">
+        <div className="grid md:grid-cols-2 gap-4 md:gap-12 items-stretch">
           {/* Left Side — About Me */}
-          <div className="pr-6 sm:pr-8">
+          <div className="flex flex-col px-2 sm:px-0">
             <div className="flex items-center gap-4 mb-4">
               <span
                 className="text-xs font-semibold tracking-widest uppercase"
@@ -34,7 +34,7 @@ export default memo(function ProfilSection() {
             </h2>
 
             <p
-              className="text-base leading-relaxed max-w-[420px] text-justify"
+              className="text-base leading-relaxed text-justify w-full"
               style={{
                 color: "#F3F3F398",
                 fontFamily: "'Montserrat', sans-serif",
@@ -83,18 +83,8 @@ export default memo(function ProfilSection() {
           </div>
 
           {/* Right Side — FaultyTerminal */}
-          <div className="w-full max-w-[420px] flex justify-center pr-6 sm:pr-8 md:pr-0 mt-6 md:mt-0 md:max-w-none md:w-full ml-3 sm:ml-4 md:ml-0">
-            <div
-              className="relative overflow-hidden w-[280px] sm:w-[320px] aspect-square md:w-full md:aspect-auto md:h-full md:flex-1 md:min-h-0"
-              style={{
-                maskImage:
-                  "linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
-                WebkitMaskImage:
-                  "linear-gradient(to right, transparent, black 15%, black 85%, transparent), linear-gradient(to bottom, transparent, black 15%, black 85%, transparent)",
-                maskComposite: "intersect",
-                WebkitMaskComposite: "destination-in",
-              }}
-            >
+          <div className="w-full flex justify-center mt-2 md:mt-0 px-2 sm:px-0">
+            <div className="relative overflow-hidden w-full h-70 sm:h-80 md:h-full md:flex-1 md:min-h-0">
               <div className="absolute inset-0">
                 <FaultyTerminal
                   tint="#8ff0a4"

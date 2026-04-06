@@ -206,6 +206,12 @@ void main() {
 
     float luminance = dot(col, vec3(0.299, 0.587, 0.114));
     float alpha = smoothstep(0.01, 0.15, luminance);
+    
+    // Mask properties for mobile performance optimization
+    float edgeX = smoothstep(0.0, 0.15, uv.x) * smoothstep(1.0, 0.85, uv.x);
+    float edgeY = smoothstep(0.0, 0.15, uv.y) * smoothstep(1.0, 0.85, uv.y);
+    alpha *= (edgeX * edgeY);
+
     gl_FragColor = vec4(col, alpha);
 }
 `;
@@ -237,7 +243,7 @@ export default memo(function FaultyTerminal({
   tint = '#ffffff',
   mouseReact = true,
   mouseStrength = 0.2,
-  dpr = Math.min(window.devicePixelRatio || 1, 2),
+  dpr = typeof window !== 'undefined' ? (window.innerWidth > 768 ? Math.min(window.devicePixelRatio || 1, 2) : 1) : 1,
   pageLoadAnimation = true,
   brightness = 1,
   className = '',

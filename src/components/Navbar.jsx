@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, memo } from 'react'
+import { useEffect, useRef, useState, memo, useCallback } from 'react'
 
 const navItems = [
   { label: 'Home', href: '#beranda' },
@@ -7,6 +7,47 @@ const navItems = [
   { label: 'Projects', href: '#proyek' },
   { label: 'Contact', href: '#kontak' },
 ]
+
+const DesktopNavItem = memo(({ item, isActive, onClick }) => (
+  <a
+    href={item.href}
+    onClick={(e) => onClick(e, item.href)}
+    className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 group inline-flex items-center gap-2 ${isActive
+      ? 'text-[#8ff0a4]'
+      : 'text-slate-300 hover:text-[#8ff0a4]'
+      }`}
+  >
+    <span
+      className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${isActive
+        ? 'bg-[#8ff0a4] opacity-100'
+        : 'bg-transparent opacity-0'
+        }`}
+    />
+    {item.label}
+    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#8ff0a4] group-hover:w-3/4 transition-all duration-300 rounded-full" />
+  </a>
+));
+DesktopNavItem.displayName = "DesktopNavItem";
+
+const MobileNavItem = memo(({ item, isActive, onClick }) => (
+  <a
+    href={item.href}
+    onClick={(e) => onClick(e, item.href)}
+    className={`flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-2 py-1.5 text-[11px] font-medium transition-all duration-300 ${isActive
+      ? 'text-[#8ff0a4] bg-[#8ff0a4]/12 scale-105'
+      : 'text-[#BEBEBE] hover:text-[#8ff0a4] hover:bg-white/5 hover:scale-110'
+      }`}
+  >
+    <span
+      className={`mb-1 h-1.5 w-1.5 rounded-full ${isActive
+        ? 'bg-[#8ff0a4]'
+        : 'bg-transparent'
+        }`}
+    />
+    <span className="w-full truncate text-center">{item.label}</span>
+  </a>
+));
+MobileNavItem.displayName = "MobileNavItem";
 
 export default memo(function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -58,20 +99,31 @@ export default memo(function Navbar() {
       })
     }
 
-    window.addEventListener('scroll', updateNavbarState, { passive: true })
-    window.addEventListener('resize', updateNavbarState)
+    let ticking = false
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateNavbarState()
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
     updateNavbarState()
 
     return () => {
-      window.removeEventListener('scroll', updateNavbarState)
-      window.removeEventListener('resize', updateNavbarState)
+      window.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
       if (autoScrollLockTimeoutRef.current) {
         clearTimeout(autoScrollLockTimeoutRef.current)
       }
     }
   }, [])
 
-  const handleClick = (e, href) => {
+  const handleClick = useCallback((e, href) => {
     e.preventDefault()
     console.log('[Navbar] Clicked nav item', href)
     setActiveSection(href)
@@ -102,7 +154,7 @@ export default memo(function Navbar() {
 
       target.scrollIntoView({ behavior: 'smooth' })
     }
-  }
+  }, [])
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 pointer-events-none">
@@ -116,24 +168,12 @@ export default memo(function Navbar() {
           {/* Desktop Menu */}
           <div className="flex items-center gap-1 px-2">
             {navItems.map((item) => (
-              <a
+              <DesktopNavItem
                 key={item.href}
-                href={item.href}
-                onClick={(e) => handleClick(e, item.href)}
-                className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 group inline-flex items-center gap-2 ${activeSection === item.href
-                  ? 'text-[#8ff0a4]'
-                  : 'text-slate-300 hover:text-[#8ff0a4]'
-                  }`}
-              >
-                <span
-                  className={`h-1.5 w-1.5 rounded-full transition-all duration-300 ${activeSection === item.href
-                    ? 'bg-[#8ff0a4] opacity-100'
-                    : 'bg-transparent opacity-0'
-                    }`}
-                />
-                {item.label}
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-[#8ff0a4] group-hover:w-3/4 transition-all duration-300 rounded-full" />
-              </a>
+                item={item}
+                isActive={activeSection === item.href}
+                onClick={handleClick}
+              />
             ))}
           </div>
         </div>
@@ -143,23 +183,12 @@ export default memo(function Navbar() {
       <div className="lg:hidden pointer-events-auto fixed inset-x-0 bottom-3 z-70 flex justify-center px-3 pb-[env(safe-area-inset-bottom)]">
         <div className="flex w-full max-w-140 items-end gap-1 rounded-2xl border border-white/10 bg-surface/80 px-2 py-2 backdrop-blur-xl shadow-lg shadow-black/20">
           {navItems.map((item) => (
-            <a
+            <MobileNavItem
               key={item.href}
-              href={item.href}
-              onClick={(e) => handleClick(e, item.href)}
-              className={`flex min-w-0 flex-1 flex-col items-center justify-center rounded-xl px-2 py-1.5 text-[11px] font-medium transition-all duration-300 ${activeSection === item.href
-                ? 'text-[#8ff0a4] bg-[#8ff0a4]/12 scale-105'
-                : 'text-[#BEBEBE] hover:text-[#8ff0a4] hover:bg-white/5 hover:scale-110'
-                }`}
-            >
-              <span
-                className={`mb-1 h-1.5 w-1.5 rounded-full ${activeSection === item.href
-                  ? 'bg-[#8ff0a4]'
-                  : 'bg-transparent'
-                  }`}
-              />
-              <span className="w-full truncate text-center">{item.label}</span>
-            </a>
+              item={item}
+              isActive={activeSection === item.href}
+              onClick={handleClick}
+            />
           ))}
         </div>
       </div>

@@ -1,6 +1,10 @@
 @keyframes logo-loop {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
 }
 
 .logo-loop-container {
@@ -25,7 +29,6 @@
   animation: logo-loop linear infinite reverse;
 }
 
-
 .logo-loop-mask {
   mask-image: linear-gradient(
     to right,
@@ -45,7 +48,9 @@
 
 .logo-loop-track img {
   opacity: 0.45;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
 }
 
 .logo-loop-track img:hover {
