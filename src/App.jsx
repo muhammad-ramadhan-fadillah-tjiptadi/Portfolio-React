@@ -3,6 +3,7 @@ import Loader from "./components/Loader";
 import HeroSection from "./components/HeroSection";
 import ProfileSection from "./components/ProfileSection";
 import EducationSection from "./components/EducationSection";
+import CertificateSection from "./components/CertificateSection";
 import ProjectSection from "./components/ProjectSection";
 import ContactSection from "./components/ContactSection";
 import Footer from "./components/Footer";
@@ -21,7 +22,7 @@ export default function App() {
       window.history.replaceState(
         null,
         "",
-        window.location.pathname + window.location.search
+        window.location.pathname + window.location.search,
       );
     }
 
@@ -41,6 +42,7 @@ export default function App() {
         <HeroSection />
         <ProfileSection />
         <EducationSection />
+        <CertificateSection />
         <ProjectSection />
         <ContactSection />
         <Footer />

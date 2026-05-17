@@ -31,7 +31,7 @@ export default memo(function KontakSection() {
                 className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: "#F3F3F398", fontFamily: "'Montserrat', sans-serif" }}
               >
-                03 CONTACT
+                04 CONTACT
               </span>
               <div className="h-px w-12 bg-white/20" />
             </div>

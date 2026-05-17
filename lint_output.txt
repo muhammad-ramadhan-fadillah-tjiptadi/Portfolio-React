@@ -1,0 +1,44 @@
+
+/home/byramadhan/Code/Reactjs/Portfolio-React/.agents/skills/intopia-web-accessibility/scripts/check-colour-contrast.js
+    3:12  error  'require' is not defined  no-undef
+    4:14  error  'require' is not defined  no-undef
+  217:33  error  'process' is not defined  no-undef
+  235:21  error  'process' is not defined  no-undef
+  239:5   error  'process' is not defined  no-undef
+  247:5   error  'process' is not defined  no-undef
+  256:5   error  'process' is not defined  no-undef
+  308:3   error  'process' is not defined  no-undef
+
+/home/byramadhan/Code/Reactjs/Portfolio-React/.agents/skills/intopia-web-accessibility/scripts/composite-colour.js
+  58:27  error  'process' is not defined  no-undef
+  63:3   error  'process' is not defined  no-undef
+  71:3   error  'process' is not defined  no-undef
+  81:3   error  'process' is not defined  no-undef
+
+/home/byramadhan/Code/Reactjs/Portfolio-React/src/components/CertificateSection.jsx
+  105:5  error  Error: This value cannot be modified
+
+Modifying a variable defined outside a component or hook is not allowed. Consider using an effect.
+
+  103 |   const openModal = (cert) => {
+  104 |     setSelectedCertificate(cert);
+> 105 |     document.body.style.overflow = 'hidden';
+      |     ^^^^^^^^^^^^^^^^^^^ value cannot be modified
+  106 |     
+  107 |     requestAnimationFrame(() => {
+  108 |       if (modalRef.current && modalContentRef.current) {  react-hooks/immutability
+  143:7  error  Error: This value cannot be modified
+
+Modifying a variable defined outside a component or hook is not allowed. Consider using an effect.
+
+  141 |     } else {
+  142 |       setSelectedCertificate(null);
+> 143 |       document.body.style.overflow = '';
+      |       ^^^^^^^^^^^^^^^^^^^ value cannot be modified
+  144 |     }
+  145 |   };
+  146 |                                                                                                          react-hooks/immutability
+
+✖ 14 problems (14 errors, 0 warnings)
+
+[ELIFECYCLE] Command failed with exit code 1.

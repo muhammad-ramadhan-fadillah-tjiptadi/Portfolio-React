@@ -69,7 +69,7 @@ export default memo(function EducationSection() {
             }}
           >
             An academic journey that shaped my skills and perspective in
-            software development and computer science.
+            Web Developer
           </p>
         </div>
       </div>

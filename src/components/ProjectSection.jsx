@@ -118,7 +118,7 @@ export default memo(function ProyekSection() {
                 className="text-xs font-semibold tracking-widest uppercase"
                 style={{ color: '#F3F3F398', fontFamily: "'Montserrat', sans-serif" }}
               >
-                02 Featured Projects
+                03 Featured Projects
               </span>
               <div className="h-px w-12 bg-white/20" />
             </div>
